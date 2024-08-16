@@ -14,7 +14,7 @@ class create_DeepFashion:
         # The constants
         img_folder_name = "dataset/img"
         eval_folder_name = "dataset/Eval"
-        anno_folder_name = "dataset/Anno"
+        anno_folder_name = "dataset/Anno_coarse"
         list_eval_partition_file = "list_eval_partition.txt"
         list_attr_img_file = "list_attr_img.txt"
         list_category_img_file = "list_category_img.txt"
@@ -124,24 +124,29 @@ class create_DeepFashion:
                 #Divide and save the data into train/val/test dataframe
                 #Save a tuple of (img_path,bbox_list,category_onehot,attributes_vector)
                 if words[1].strip() == "train":
-                    self.train = self.train.append({"img_path" : img, "bbox" : bbox, "category" : category},ignore_index = True )
+                    self.train = pd.concat([self.train, pd.DataFrame({"img_path": [img], "bbox": [bbox], "category": [category]})], ignore_index=True)
                 if words[1].strip() == "val":
-                    self.val = self.val.append({"img_path" : img, "bbox" : bbox, "category" : category},ignore_index = True)
+                    self.val = pd.concat([self.val, pd.DataFrame({"img_path": [img], "bbox": [bbox], "category": [category]})], ignore_index=True)
                 if words[1].strip() == "test":
-                    self.test = self.test.append({"img_path" : img, "bbox" : bbox, "category" : category},ignore_index = True)
+                    self.test = pd.concat([self.test, pd.DataFrame({"img_path": [img], "bbox": [bbox], "category": [category]})], ignore_index=True)
 
         print("Training images", int(self.train.shape[0]))
         print("Validation images", int(self.val.shape[0]))
         print("Test images", int(self.test.shape[0]))
-        assert(imgs_count == int(self.train.shape[0])+int(self.test.shape[0])+int(self.val.shape[0]))
+        assert imgs_count == int(self.train.shape[0])+ int(self.test.shape[0])+ int(self.val.shape[0])
 
         # Store the data structures
-        self.train.to_csv( self.path + "/split-data/train_new.csv", index = False)
-        self.val.to_csv( self.path + "/split-data/val_new.csv", index = False)
-        self.test.to_csv( self.path +"/split-data/test_new.csv", index = False)
+        self.train.to_csv(os.path.join("split-data", "train_new.csv"), index=False)
+        self.val.to_csv(os.path.join("split-data", "val_new.csv"), index=False)
+        self.test.to_csv(os.path.join("split-data", "test_new.csv"), index=False)
         print("Storage done")
 
 
+#if __name__ == "__main__":
+ #   df = create_DeepFashion("D:/Flipkart Grid/Fashion-Intelligence-Systems/dataset/Category and Attribute Prediction")
+  #  df.read_imgs_and_split()
+  
+  
 if __name__ == "__main__":
-    df = create_DeepFashion("D:/Flipkart Grid/Fashion-Intelligence-Systems/dataset/Category and Attribute Prediction")
+    df = create_DeepFashion("C:/Users/iniad/Documents/卒論/Clothing-Category-Prediction-DeepFashion")  # 修正
     df.read_imgs_and_split()
