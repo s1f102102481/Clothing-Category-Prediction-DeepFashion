@@ -39,6 +39,9 @@ class create_DeepFashion:
  
 
     def read_imgs_and_split(self):
+        train_data = []
+        val_data = []
+        test_data = []
 
         #Declating the names of the csv where the split-data would be stored
         train_file = "train.csv"
@@ -124,11 +127,17 @@ class create_DeepFashion:
                 #Divide and save the data into train/val/test dataframe
                 #Save a tuple of (img_path,bbox_list,category_onehot,attributes_vector)
                 if words[1].strip() == "train":
-                    self.train = pd.concat([self.train, pd.DataFrame({"img_path": [img], "bbox": [bbox], "category": [category]})], ignore_index=True)
+                    train_data.append({"img_path": img, "bbox": list(bbox), "category": category})
                 if words[1].strip() == "val":
-                    self.val = pd.concat([self.val, pd.DataFrame({"img_path": [img], "bbox": [bbox], "category": [category]})], ignore_index=True)
+                    val_data.append({"img_path": img, "bbox": list(bbox), "category": category})
                 if words[1].strip() == "test":
-                    self.test = pd.concat([self.test, pd.DataFrame({"img_path": [img], "bbox": [bbox], "category": [category]})], ignore_index=True)
+                    test_data.append({"img_path": img, "bbox": list(bbox), "category": category})
+                    
+                    
+        # 最後にリストからDataFrameを作成してconcat
+        self.train = pd.DataFrame(train_data)
+        self.val = pd.DataFrame(val_data)
+        self.test = pd.DataFrame(test_data)
 
         print("Training images", int(self.train.shape[0]))
         print("Validation images", int(self.val.shape[0]))
